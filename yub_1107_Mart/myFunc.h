@@ -1,6 +1,12 @@
 ﻿#ifndef MYFUNC_H_
 #define MYFUNC_H_
 
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "lcd.h"
+
 // 스위치 정의
 #define SW1 30
 #define SW2 46
@@ -9,10 +15,6 @@
 #define SW5 45
 #define SW6 77
 #define SW7 27
-
-// 타이머 변수
-int sec = 0;
-int time_count = 0;
 
 void init()
 {
