@@ -20,20 +20,25 @@ ISR(TIMER0_OVF_vect)
 int main(void)
 {
 	init();
+	unsigned int input_key = 0;
     while (1) 
     {
-		char str[16];
-		int key = getkey();
-		sprintf(str,"%d",key);
-		lcd_putsf(0,0,(unsigned char *)str);
+		input_key = getkey();
 		if (mode == NORMAL_MODE)
 		{
 			Display_Clock(hour, min, sec);
+			if (input_key == KEY_Munu) mode = MENU_MODE;
 		}
-		if (mode = MENU_MODE)
+		if (mode == MENU_MODE)
 		{
+			lcd_putsf(0,0,(unsigned char *)"1: Calculation  ");
+			lcd_putsf(0,1,(unsigned char *)"2: Total Sales  ");
 			
-		}
+			if (input_key == KEY_1) mode = CALC_MODE;
+			if (input_key == KEY_2) mode = TOTAL_MODE;
+			input_key = 0; 
+			_delay_ms(50);
+		}		
     }
 }
 
