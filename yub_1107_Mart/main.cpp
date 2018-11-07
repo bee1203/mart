@@ -28,7 +28,7 @@ ISR(TIMER0_OVF_vect)
 int main(void)
 {
 	init();
-	char buff[16];
+	char buf1[16];
 	unsigned int input_key = 0;
 	while (1)
 	{
@@ -37,6 +37,7 @@ int main(void)
 		if (input_key == KEY_LOBY)
 		{
 			lcd_clear();
+			PORTA = 0xff;
 			mode = NORMAL_MODE;
 		}
 		if (mode == NORMAL_MODE)
@@ -57,12 +58,16 @@ int main(void)
 			{
 				lcd_clear();
 				lcd_putsf(0,0,(unsigned char *)"Calculate Mode  ");
+				PORTA = 0b11011111;
 				mode = CALC_MODE;
 			}
 			if (input_key == KEY_2)
 			{
 				lcd_clear();
 				lcd_putsf(0,0,(unsigned char *)"Total Sales     ");
+				sprintf(buf1,"=%11d won",total_sales);
+				lcd_putsf(0,1,(unsigned char *)buf1);
+				PORTA = 0b01111111;
 				mode = TOTAL_MODE;
 			}
 			_delay_ms(50);
@@ -137,6 +142,7 @@ int main(void)
 			{
 				lcd_clear();
 				lcd_putsf(0,0,(unsigned char *)"Changes Mode    ");
+				PORTA = 0b10111111;
 				mode = CHANGES_MODE;
 			}
 		}
@@ -166,8 +172,12 @@ int main(void)
 					total_money = 0;
 					while(1)
 					{
-						if (timer > future) mode = NORMAL_MODE;
-						if (getkey() == KEY_LOBY) mode = NORMAL_MODE;
+						int break_key = getkey();
+						if ((timer > future) || (break_key == KEY_LOBY)) 
+						{
+							mode = NORMAL_MODE;
+							break;
+						}
 					}					
 				}
 				else lcd_putsf(0,1,(unsigned char *)"                ");
@@ -176,7 +186,16 @@ int main(void)
 		}
 		else if (mode == TOTAL_MODE)
 		{
-			
+			while(1)
+			{
+				int future = timer + 5000;
+				int break_key = getkey();
+				if ((timer > future) || (break_key == KEY_LOBY))
+				{
+					mode = NORMAL_MODE;
+					break;
+				}
+			}
 		}
 	}
 }
